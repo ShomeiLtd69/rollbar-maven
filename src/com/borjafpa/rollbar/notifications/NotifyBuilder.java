@@ -1,5 +1,13 @@
 package com.borjafpa.rollbar.notifications;
 
+import com.borjafpa.rollbar.util.AppConfiguration;
+import com.borjafpa.rollbar.util.AppConfigurationKey;
+import org.apache.log4j.helpers.LogLog;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -11,16 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.helpers.LogLog;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import com.borjafpa.rollbar.util.AppConfiguration;
-import com.borjafpa.rollbar.util.AppConfigurationKey;
 
 public class NotifyBuilder {
 
@@ -80,7 +78,10 @@ public class NotifyBuilder {
 
         // custom data
         JSONObject customData = new JSONObject();
-        fillCustomData(customData, context);
+        // Handle if this context is null (it was for imperial build)
+        if (context != null) {
+            fillCustomData(customData, context);
+        }
 
         // log message
         if (throwable != null && message != null) {
@@ -449,4 +450,7 @@ public class NotifyBuilder {
         return trace;
     }
 
+    public String getEnvironment() {
+        return environment;
+    }
 }

@@ -1,10 +1,7 @@
 package com.borjafpa.rollbar.notifications;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-
+import com.borjafpa.rollbar.util.AppConfiguration;
+import com.borjafpa.rollbar.util.AppConfigurationKey;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.MDC;
@@ -13,8 +10,10 @@ import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 
-import com.borjafpa.rollbar.util.AppConfiguration;
-import com.borjafpa.rollbar.util.AppConfigurationKey;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class RollbarAppender extends AppenderSkeleton {
 
@@ -53,7 +52,9 @@ public class RollbarAppender extends AppenderSkeleton {
             if (hasThrowable) {
                 RollbarNotifier.notifyError((String) event.getMessage(), getThrowable(event), context);
             } else {
-                RollbarNotifier.notify((String) event.getMessage(), context);
+                // This is a hack to get an error to appear in Rollbar for our Error log messages
+                RollbarNotifier.notifyError((String) event.getMessage(), null, context);
+//                RollbarNotifier.notify((String) event.getMessage(), context);
             }
 
         } catch (Exception e) {
@@ -122,7 +123,11 @@ public class RollbarAppender extends AppenderSkeleton {
     private Map<String, Object> getContext(final LoggingEvent event) {
         @SuppressWarnings("unchecked")
         final Map<String, Object> context = MDC.getContext();
-        context.put("LOG_BUFFER", new ArrayList<String>(LOG_BUFFER));
+
+        // This context is null for imperial - obviously something incompatible with Imperial's log4j usage
+        if (context != null) {
+            context.put("LOG_BUFFER", new ArrayList<String>(LOG_BUFFER));
+        }
         return context;
     }
 

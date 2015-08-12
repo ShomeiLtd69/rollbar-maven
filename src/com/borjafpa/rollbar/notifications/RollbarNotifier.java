@@ -1,5 +1,11 @@
 package com.borjafpa.rollbar.notifications;
 
+import com.borjafpa.rollbar.http.HttpRequest;
+import com.borjafpa.rollbar.util.AppConfiguration;
+import com.borjafpa.rollbar.util.AppConfigurationKey;
+import org.apache.log4j.helpers.LogLog;
+import org.json.simple.JSONObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -9,13 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.helpers.LogLog;
-import org.json.simple.JSONObject;
-
-import com.borjafpa.rollbar.http.HttpRequest;
-import com.borjafpa.rollbar.util.AppConfiguration;
-import com.borjafpa.rollbar.util.AppConfigurationKey;
 
 public class RollbarNotifier {
 
@@ -47,6 +46,15 @@ public class RollbarNotifier {
 
     public static void init(String urlString, String apiKey, String env) throws UnknownHostException {
         url = getURL(urlString);
+
+        // hack to allow the env to be init prior to the init from log4j, i.e. allow Imperial runtime to decide the env
+        if (env == null) {
+            NotifyBuilder notifyBuilder = getBuilder();
+            if (notifyBuilder != null) {
+                env = notifyBuilder.getEnvironment();
+            }
+        }
+
         builder = new NotifyBuilder(apiKey, env);
     }
 

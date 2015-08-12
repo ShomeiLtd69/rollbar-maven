@@ -4,7 +4,7 @@
 
 	<groupId>com.borjafpa.rollbar</groupId>
 	<artifactId>RollbarMaven</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -125,10 +125,10 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
 		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-mockito-full</artifactId>
-			<version>1.5</version>
-		</dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-mockito-release-full</artifactId>
+            <version>1.5.3</version>
+        </dependency>
 	</dependencies>
 </project>
