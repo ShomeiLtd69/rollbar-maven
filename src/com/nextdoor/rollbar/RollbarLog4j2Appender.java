@@ -109,6 +109,10 @@ public class RollbarLog4j2Appender extends AbstractAppender {
         RollbarBuilder rollbarBuilder = RollbarBuilder.init(client.getEnvironment());
         
         this.client = new Rollbar(client.getAccessToken(), rollbarBuilder.getEnv()).server(client.getServer());
+        
+        if ("dev".equalsIgnoreCase(this.client.getEnvironment()) || "config-default-env".equalsIgnoreCase(this.client.getEnvironment())) {
+            return;
+        }
 
         if (event.getThrown() != null) {
             if (event.getMessage().toString() != null) {
